@@ -10,10 +10,10 @@ Script to detect C2 traffic of malware using a DGA Algorithm. Malware using a DG
  ## Parameters
  `-f, --file | input pcapfile`
  `-c, --count | Amount of suspisious nxdomains with given entropy before an alert is given, defaults to 5`
- `-t, --entropy | Entropy algorithm used, kl or shannon, defaults to shannon`
+ `-e, --entropy | Entropy algorithm used, kl or shannon, defaults to shannon`
  `-et, --entropy_treshold | Entropy Treshold`
  `-t, --time_frame | Time treshold in seconds, defaults to 60`
  `-v, --verbose | Verbose output`
 
  ## Example
-`./detector.py -f test.pcap -c 5 -t kl -et 1.05 -t 300 -v` 
+`./detector.py -f test.pcap -c 5 -e kl -et 1.05 -t 300 -v` 
