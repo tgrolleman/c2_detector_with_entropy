@@ -1,0 +1,6 @@
+# ignore log files
+*.log*
+# ignore pcap
+*.pcap
+*.pcapng
+

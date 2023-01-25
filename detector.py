@@ -116,8 +116,14 @@ def main():
         print("-----------------------------")
 
     for pkt in pcap:
+        #Check if ipv4 or ipv6
+        try:
+            src_ip = pkt.ip.dst
+        except: 
+            src_ip = pkt.ipv6.dst
+
         if params.verbose:
-            print("Processing following packet | queryname: "+pkt.dns.qry_name+" src_ip: "+pkt.ip.dst+" time: "+pkt.frame_info.time)
+            print("Processing following packet | queryname: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time)
         #Get domain - tld
         domain = str(pkt.dns.qry_name.split('.', 1)[0])
         #Calculate entropy
@@ -130,18 +136,18 @@ def main():
         if entropy_score < params.entropy_treshold:
             #we wont proces this packet
             if params.verbose:
-                print("NXDomain below entropy treshold | query: "+pkt.dns.qry_name+" src_ip: "+pkt.ip.dst+" time: "+pkt.frame_info.time+" Entropy score: "+str(entropy_score))
+                print("NXDomain below entropy treshold | query: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time+" Entropy score: "+str(entropy_score))
         else:
             #Epoch is in nonaseconds with a dot in the middle (1654384424.204505000), lets normalize without the dot
             nano_epoch = int(pkt.frame_info.time_epoch.replace('.', ''))
 
             #Check if src ip excist in data dict, if not create it and initialize an empty list we can later append data to
-            if pkt.ip.dst not in data:
-                data[pkt.ip.dst] = []
+            if src_ip not in data:
+                data[src_ip] = []
 
             #Lets check if there are already X amount of queries in the data set within the time frame
             count = 0
-            for entry in data[pkt.ip.dst]:
+            for entry in data[src_ip]:
                 #Check how many packets are withing the time treshold, treshold is given in seconds, so at nine 0's te make it nanonseconds
                 if nano_epoch - entry[2] < params.time_frame * 1000000000:
                     count +=1
@@ -151,10 +157,10 @@ def main():
 
             #Check if count above treshold, if so lets save it for an alert
             if count >= params.count:
-                alert[pkt.ip.dst] = 'alert'
+                alert[src_ip] = 'alert'
 
             #Done proccessing this packet, append the data to the dataset
-            data[pkt.ip.dst].append([pkt.dns.qry_name, entropy_score, nano_epoch])
+            data[src_ip].append([pkt.dns.qry_name, entropy_score, nano_epoch])
 
     #Processing every packet is done, lets summarize:
     if params.verbose:
@@ -175,6 +181,6 @@ def main():
     if params.verbose:
         print("Full data set with entropy_score above treshold:")
         print(data)
-#Terugkijken met tijd
+
 if __name__ == '__main__':
     main()
