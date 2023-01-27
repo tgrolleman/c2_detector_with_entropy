@@ -122,8 +122,8 @@ def main():
         except: 
             src_ip = pkt.ipv6.dst
 
-        if params.verbose:
-            print("Processing following packet | queryname: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time)
+        #if params.verbose:
+            #print("Processing following packet | queryname: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time)
         #Get domain - tld
         domain = str(pkt.dns.qry_name.split('.', 1)[0])
         #Calculate entropy
@@ -153,14 +153,14 @@ def main():
                     count +=1
 
             if params.verbose:
-                print("Found "+str(count)+" hits within the given timeframe treshold")
+      	        print("Hit "+str(count)+" within timeframe. | Query: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time+" Entropy score: "+str(entropy_score))
 
             #Check if count above treshold, if so lets save it for an alert
             if count >= params.count:
                 alert[src_ip] = 'alert'
 
             #Done proccessing this packet, append the data to the dataset
-            data[src_ip].append([pkt.dns.qry_name, entropy_score, nano_epoch, pkt.frame_info.time])
+            data[src_ip].append([pkt.dns.qry_name, entropy_score, nano_epoch, pkt.frame_info.time, src_ip])
 
     #Processing every packet is done, lets summarize:
     if params.verbose:
@@ -180,7 +180,8 @@ def main():
 
     if params.verbose:
         print("Full data set with entropy_score above treshold:")
-        print(data)
+        for i in data:
+            print(data[i])
 
 if __name__ == '__main__':
     main()
