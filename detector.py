@@ -160,7 +160,7 @@ def main():
                 alert[src_ip] = 'alert'
 
             #Done proccessing this packet, append the data to the dataset
-            data[src_ip].append([pkt.dns.qry_name, entropy_score, nano_epoch])
+            data[src_ip].append([pkt.dns.qry_name, entropy_score, nano_epoch, pkt.frame_info.time])
 
     #Processing every packet is done, lets summarize:
     if params.verbose:
