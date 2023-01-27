@@ -103,7 +103,7 @@ def main():
         sys.exit(1)
 
     try:
-        pcap = pyshark.FileCapture(params.file, display_filter='dns.flags.rcode == 3', keep_packets=True)
+        pcap = pyshark.FileCapture(params.file, display_filter='dns.flags.rcode == 3 and (dns.qry.type == 1 or dns.qry.type == 28 or dns.qry.type == 5)', keep_packets=True)
     except Exception as e:
         sys.stderr.write('Failed to open pcapfile {0}: {1}'.format(params.file, e))
         sys.exit(1)
