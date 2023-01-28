@@ -126,6 +126,11 @@ def main():
             #print("Processing following packet | queryname: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time)
         #Get domain - tld
         domain = str(pkt.dns.qry_name.split('.', 1)[0])
+
+        #Remove www. if it's there
+        if domain.startswith('www.'):
+            domain = re.sub(r'www.', '', domain)
+        
         #Calculate entropy
         if params.entropy == "kl":
             entropy_score = relative_entropy(domain)
