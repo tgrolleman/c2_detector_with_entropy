@@ -150,22 +150,34 @@ def main():
             if src_ip not in data:
                 data[src_ip] = []
 
-            #Lets check if there are already X amount of queries in the data set within the time frame
-            count = 0
-            for entry in data[src_ip]:
-                #Check how many packets are withing the time treshold, treshold is given in seconds, so at nine 0's te make it nanonseconds
-                if nano_epoch - entry[2] < params.time_frame * 1000000000:
-                    count +=1
+            #CHeck if domain already in array, so we dont hit on multiple queries on the same domain. With domain search order only search for first part of domain
+            in_array = 0
+            for i in data[src_ip]:
+                t = i[0].split(".")
+                s = domain.split(".")
+                if t[0] == s[0]:
+                    in_array = 1
 
-            if params.verbose:
-      	        print("Hit "+str(count)+" within timeframe. | Query: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time+" Entropy score: "+str(entropy_score))
+            if in_array == 1:
+                if params.verbose:
+                    print("Already a hit on:"+pkt.dns.qry_name+" on src_ip:"+src_ip+", dont count it as a hit")
+            else:
+                #Lets check if there are already X amount of queries in the data set within the time frame
+                count = 0
+                for entry in data[src_ip]:
+                    #Check how many packets are withing the time treshold, treshold is given in seconds, so at nine 0's te make it nanonseconds
+                    if nano_epoch - entry[2] < params.time_frame * 1000000000:
+                        count +=1
 
-            #Check if count above treshold, if so lets save it for an alert
-            if count >= params.count:
-                alert[src_ip] = 'alert'
+                if params.verbose:
+                  	 print("Hit "+str(count)+" within timeframe. | Query: "+pkt.dns.qry_name+" src_ip: "+src_ip+" time: "+pkt.frame_info.time+" Entropy score: "+str(entropy_score))
 
-            #Done proccessing this packet, append the data to the dataset
-            data[src_ip].append([pkt.dns.qry_name, entropy_score, nano_epoch, pkt.frame_info.time, src_ip])
+                #Check if count above treshold, if so lets save it for an alert
+                if count >= params.count:
+                    alert[src_ip] = 'alert'
+
+                #Done proccessing this packet, append the data to the dataset
+                data[src_ip].append([pkt.dns.qry_name, entropy_score, nano_epoch, pkt.frame_info.time, src_ip])
 
     #Processing every packet is done, lets summarize:
     if params.verbose:
