@@ -20,6 +20,5 @@ Script to detect C2 traffic of malware using a DGA Algorithm. Malware using a DG
 
 ## Authors
 
-Created by Robert Cranendonk and Tom Grolleman
-https://github.com/RACranendonk
-https://github.com/tgrolleman
+- Robert Cranendonk https://github.com/RACranendonk
+- Tom Grolleman https://github.com/tgrolleman
