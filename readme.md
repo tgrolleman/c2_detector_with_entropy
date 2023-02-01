@@ -17,3 +17,9 @@ Script to detect C2 traffic of malware using a DGA Algorithm. Malware using a DG
 
  ## Example
 `./detector.py -f test.pcap -c 5 -e kl -et 1.05 -t 300 -v` 
+
+## Authors
+
+Created by Robert Cranendonk and Tom Grolleman
+https://github.com/RACranendonk
+https://github.com/tgrolleman
